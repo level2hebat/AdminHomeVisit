@@ -225,7 +225,7 @@
             const loginTime = localStorage.getItem('adminLoginTime');
             
             if (!isLoggedIn || !loginTime) {
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
                 return;
             }
             
@@ -496,7 +496,7 @@
                 localStorage.removeItem('adminLoggedIn');
                 localStorage.removeItem('adminLoginTime');
                 localStorage.removeItem('adminName');
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             }
         }
     </script>
