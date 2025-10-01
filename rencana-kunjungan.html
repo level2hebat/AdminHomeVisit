@@ -228,6 +228,25 @@
                 Semua Rencana Kunjungan
               </h3>
               <div class="flex gap-2">
+                <button
+                  onclick="downloadCSV()"
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                >
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-4-4m4 4l4-4m-6 4h8a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  Download CSV
+                </button>
                 <select
                   id="teacherFilter"
                   class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
@@ -427,30 +446,32 @@
       }
 
       function displayPlans() {
-    const container = document.getElementById('plansList');
-    let filteredPlans = [...allPlans];
-    
-    // Filter wali kelas
-    const teacherFilter = document.getElementById('teacherFilter').value;
-    if (teacherFilter) {
-        filteredPlans = filteredPlans.filter(plan => plan.teacher === teacherFilter);
-    }
+        const container = document.getElementById("plansList");
+        let filteredPlans = [...allPlans];
 
-    // Filter bulan & tahun
-    const monthFilter = document.getElementById('monthFilter').value; // formatnya "2025-09"
-    if (monthFilter) {
-        const [year, month] = monthFilter.split('-').map(Number);
-        filteredPlans = filteredPlans.filter(plan => {
+        // Filter wali kelas
+        const teacherFilter = document.getElementById("teacherFilter").value;
+        if (teacherFilter) {
+          filteredPlans = filteredPlans.filter(
+            (plan) => plan.teacher === teacherFilter
+          );
+        }
+
+        // Filter bulan & tahun
+        const monthFilter = document.getElementById("monthFilter").value; // formatnya "2025-09"
+        if (monthFilter) {
+          const [year, month] = monthFilter.split("-").map(Number);
+          filteredPlans = filteredPlans.filter((plan) => {
             const planDate = new Date(plan.plan_date);
             return (
-                planDate.getFullYear() === year &&
-                planDate.getMonth() + 1 === month
+              planDate.getFullYear() === year &&
+              planDate.getMonth() + 1 === month
             );
-        });
-    }
-    
-    if (filteredPlans.length === 0) {
-        container.innerHTML = `
+          });
+        }
+
+        if (filteredPlans.length === 0) {
+          container.innerHTML = `
             <div class="text-center py-8">
                 <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -458,34 +479,39 @@
                 <p class="text-gray-500">Tidak ada rencana ditemukan</p>
             </div>
         `;
-        return;
-    }
-    
-    container.innerHTML = filteredPlans.map(plan => {
-        let statusText = plan.status || "planned";
-        let statusClass = "bg-gray-100 text-gray-800";
+          return;
+        }
 
-        switch (plan.status) {
-            case "planned":
+        container.innerHTML = filteredPlans
+          .map((plan) => {
+            let statusText = plan.status || "planned";
+            let statusClass = "bg-gray-100 text-gray-800";
+
+            switch (plan.status) {
+              case "planned":
                 statusClass = "bg-blue-100 text-blue-800";
                 statusText = "Direncanakan";
                 break;
-            case "completed":
+              case "completed":
                 statusClass = "bg-green-100 text-green-800";
                 statusText = "Selesai";
                 break;
-            case "cancelled":
+              case "cancelled":
                 statusClass = "bg-red-100 text-red-800";
                 statusText = "Dibatalkan";
                 break;
-        }
+            }
 
-        return `
+            return `
             <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
                 <div class="flex justify-between items-start mb-2">
                     <div>
-                        <h4 class="font-medium text-gray-800">Kunjungan ke rumah ${plan.student_name}</h4>
-                        <p class="text-sm text-gray-600"> Walikelas ${plan.teacher}</p>
+                        <h4 class="font-medium text-gray-800">Kunjungan ke rumah ${
+                          plan.student_name
+                        }</h4>
+                        <p class="text-sm text-gray-600"> Walikelas ${
+                          plan.teacher
+                        }</p>
                     </div>
                     <div class="flex flex-col items-end">
                         <span class="text-xs text-gray-500 mb-1">Status:</span>
@@ -493,15 +519,19 @@
                     </div>
                 </div>
                 <div class="text-sm text-gray-600">
-                    <p>📅 ${new Date(plan.plan_date).toLocaleDateString('id-ID')} - ${plan.plan_time}</p>
+                    <p>📅 ${new Date(plan.plan_date).toLocaleDateString(
+                      "id-ID"
+                    )} - ${plan.plan_time}</p>
                     <p>📝 ${plan.visit_purpose}</p>
-                    <p class="text-xs text-gray-500 mt-2">Dibuat: ${new Date(plan.created_at).toLocaleDateString('id-ID')}</p>
+                    <p class="text-xs text-gray-500 mt-2">Dibuat: ${new Date(
+                      plan.created_at
+                    ).toLocaleDateString("id-ID")}</p>
                 </div>
             </div>
         `;
-    }).join('');
-}
-
+          })
+          .join("");
+      }
 
       function filterPlans() {
         displayPlans();
@@ -531,6 +561,112 @@
           localStorage.removeItem("adminLoginTime");
           localStorage.removeItem("adminName");
           window.location.href = "index.html";
+        }
+      }
+
+      function downloadCSV() {
+        // Ambil semua data rencana dari variabel global allPlans (hasil query Supabase)
+        let filteredPlans = [...allPlans];
+
+        // --- Filter Guru berdasarkan select option ---
+        const teacherFilter = document.getElementById("teacherFilter")?.value;
+        if (teacherFilter) {
+          // Jika ada guru dipilih, filter data hanya untuk guru tersebut
+          filteredPlans = filteredPlans.filter(
+            (plan) => plan.teacher === teacherFilter
+          );
+        }
+
+        // --- Filter Bulan berdasarkan input type="month" ---
+        const monthFilter = document.getElementById("monthFilter")?.value;
+        if (monthFilter) {
+          // Pisahkan "tahun-bulan" (contoh: 2025-10 -> year=2025, month=10)
+          const [year, month] = monthFilter.split("-");
+          // Filter data yang sesuai dengan tahun dan bulan yang dipilih
+          filteredPlans = filteredPlans.filter((plan) => {
+            const planDate = new Date(plan.plan_date); // ubah ke objek Date
+            return (
+              planDate.getFullYear() == year &&
+              planDate.getMonth() + 1 == parseInt(month) // getMonth() mulai dari 0, jadi ditambah 1
+            );
+          });
+        }
+
+        // Kalau tidak ada data yang sesuai filter
+        if (filteredPlans.length === 0) {
+          alert("Tidak ada data rencana untuk didownload!");
+          return;
+        }
+
+        // --- Header CSV (judul kolom) ---
+        const headers = [
+          "No", // nomor urut
+          "Guru", // nama wali kelas/guru
+          "Tanggal Rencana", // tanggal rencana kunjungan
+          "Jam Rencana", // jam rencana kunjungan
+          "Nama Siswa", // nama siswa
+          "Tujuan Kunjungan", // keperluan kunjungan
+        ];
+
+        // Awal isi CSV → gabungkan header pakai delimiter titik koma (;)
+        let csvContent = headers.join(";") + "\n";
+
+        // --- Isi data CSV ---
+        filteredPlans.forEach((plan, index) => {
+          const row = [
+            index + 1, // nomor urut (mulai dari 1)
+            `"${plan.teacher}"`, // guru
+            new Date(plan.plan_date).toLocaleDateString("id-ID"), // format tanggal (Indonesia)
+            plan.plan_time, // jam rencana
+            `"${plan.student_name}"`, // nama siswa
+            `"${plan.visit_purpose}"`, // tujuan kunjungan
+          ];
+          // Gabungkan data baris dengan separator (;) lalu tambah baris baru
+          csvContent += row.join(";") + "\n";
+        });
+
+        // --- Buat file CSV ---
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;", // format file CSV UTF-8
+        });
+        const link = document.createElement("a"); // buat element <a> untuk download
+
+        if (link.download !== undefined) {
+          // Buat URL dari blob file CSV
+          const url = URL.createObjectURL(blob);
+          link.setAttribute("href", url);
+
+          // Buat nama file otomatis berdasarkan filter
+          let filename = "rencana_kunjungan_";
+          if (teacherFilter) {
+            // kalau ada filter guru → tambahkan nama guru ke nama file
+            filename += teacherFilter.replace(/\s+/g, "_").toLowerCase() + "_";
+          }
+          if (monthFilter) {
+            // kalau ada filter bulan → tambahkan bulan ke nama file
+            filename += monthFilter + "_";
+          }
+          // Tambahkan tanggal hari ini ke nama file
+          filename += new Date().toISOString().split("T")[0] + ".csv";
+
+          // Set nama file ke attribute download
+          link.setAttribute("download", filename);
+          link.style.visibility = "hidden"; // sembunyikan link
+          document.body.appendChild(link);
+          link.click(); // otomatis klik → mulai download
+          document.body.removeChild(link); // hapus link setelah selesai
+
+          // --- Ubah tampilan tombol jadi "Berhasil Download!" sementara ---
+          const button = document.querySelector(
+            'button[onclick="downloadCSV()"]'
+          );
+          if (button) {
+            const originalHTML = button.innerHTML; // simpan isi tombol asli
+            button.innerHTML = `✅ Berhasil Download!`; // ubah teks tombol
+            setTimeout(() => {
+              button.innerHTML = originalHTML; // kembalikan isi tombol setelah 2 detik
+            }, 2000);
+          }
         }
       }
     </script>
